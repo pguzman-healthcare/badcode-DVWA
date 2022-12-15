@@ -57,4 +57,3 @@ $errorNames = array(
     E_WARNING => 'Warning',
     E_NOTICE  => 'Notice'
 );
-

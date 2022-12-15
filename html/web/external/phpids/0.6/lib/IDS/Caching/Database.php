@@ -2,26 +2,26 @@
 
 /**
  * PHPIDS
- * 
+ *
  * Requirements: PHP5, SimpleXML
  *
  * Copyright (c) 2008 PHPIDS group (http://php-ids.org)
  *
  * PHPIDS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License, or 
+ * the Free Software Foundation, version 3 of the License, or
  * (at your option) any later version.
  *
  * PHPIDS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>. 
+ * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>.
  *
  * PHP version 5.1.6+
- * 
+ *
  * @category Security
  * @package  PHPIDS
  * @author   Mario Heiderich <mario.heiderich@gmail.com>
@@ -39,7 +39,7 @@ require_once 'IDS/Caching/Interface.php';
 
     #create the database
 
-    CREATE DATABASE IF NOT EXISTS `phpids` DEFAULT CHARACTER 
+    CREATE DATABASE IF NOT EXISTS `phpids` DEFAULT CHARACTER
         SET utf8 COLLATE utf8_general_ci;
     DROP TABLE IF EXISTS `cache`;
 
@@ -71,7 +71,6 @@ require_once 'IDS/Caching/Interface.php';
  */
 class IDS_Caching_Database implements IDS_Caching_Interface
 {
-
     /**
      * Caching type
      *
@@ -107,12 +106,11 @@ class IDS_Caching_Database implements IDS_Caching_Interface
      *
      * @param string $type caching type
      * @param array  $init the IDS_Init object
-     * 
+     *
      * @return void
      */
-    public function __construct($type, $init) 
+    public function __construct($type, $init)
     {
-    
         $this->type   = $type;
         $this->config = $init->config['Caching'];
         $this->handle = $this->_connect();
@@ -123,12 +121,11 @@ class IDS_Caching_Database implements IDS_Caching_Interface
      *
      * @param string $type caching type
      * @param array  $init the IDS_Init object
-     * 
+     *
      * @return object $this
      */
     public static function getInstance($type, $init)
     {
-
         if (!self::$cachingInstance) {
             self::$cachingInstance = new IDS_Caching_Database($type, $init);
         }
@@ -139,31 +136,26 @@ class IDS_Caching_Database implements IDS_Caching_Interface
      * Writes cache data into the database
      *
      * @param array $data the caching data
-     * 
+     *
      * @throws PDOException if a db error occurred
      * @return object $this
      */
-    public function setCache(array $data) 
+    public function setCache(array $data)
     {
-
         $handle = $this->handle;
-        
-        $rows = $handle->query('SELECT created FROM `' . 
-            $handle->quote($this->config['table']).'`');
-            
-        if (!$rows || $rows->rowCount() === 0) {
-        
-            $this->_write($handle, $data);             
-        } else {
 
+        $rows = $handle->query('SELECT created FROM `' .
+            $handle->quote($this->config['table']).'`');
+
+        if (!$rows || $rows->rowCount() === 0) {
+            $this->_write($handle, $data);
+        } else {
             foreach ($rows as $row) {
-                
-                if ((time()-strtotime($row['created'])) > 
+                if ((time()-strtotime($row['created'])) >
                   $this->config['expiration_time']) {
-                  
-                    $this->_write($handle, $data);  
+                    $this->_write($handle, $data);
                 }
-            }        
+            }
         }
 
         return $this;
@@ -172,26 +164,24 @@ class IDS_Caching_Database implements IDS_Caching_Interface
     /**
      * Returns the cached data
      *
-     * Note that this method returns false if either type or file cache is 
+     * Note that this method returns false if either type or file cache is
      * not set
      *
      * @throws PDOException if a db error occurred
      * @return mixed cache data or false
      */
-    public function getCache() 
+    public function getCache()
     {
-
-        try{
+        try {
             $handle = $this->handle;
-            $result = $handle->prepare('SELECT * FROM ' . 
-                $handle->quote($this->config['table']) . 
+            $result = $handle->prepare('SELECT * FROM ' .
+                $handle->quote($this->config['table']) .
                 ' where type=?');
             $result->execute(array($this->type));
 
             foreach ($result as $row) {
                 return unserialize($row['data']);
             }
-
         } catch (PDOException $e) {
             die('PDOException: ' . $e->getMessage());
         }
@@ -204,16 +194,15 @@ class IDS_Caching_Database implements IDS_Caching_Interface
      * @return object dbh
      * @throws PDOException if a db error occurred
      */
-    private function _connect() 
+    private function _connect()
     {
-
         // validate connection parameters
         if (!$this->config['wrapper']
             || !$this->config['user']
                 || !$this->config['password']
                     || !$this->config['table']) {
-
-            throw new Exception('
+            throw new Exception(
+                '
                 Insufficient connection parameters'
             );
         }
@@ -225,30 +214,28 @@ class IDS_Caching_Database implements IDS_Caching_Interface
                 $this->config['user'],
                 $this->config['password']
             );
-
         } catch (PDOException $e) {
             die('PDOException: ' . $e->getMessage());
         }
         return $handle;
     }
-    
+
     /**
      * Write the cache data to the table
-     * 
+     *
      * @param object $handle the database handle
      * @param array  $data   the caching data
-     * 
+     *
      * @return object dbh
      * @throws PDOException if a db error occurred
-     */    
-    private function _write($handle, $data) 
+     */
+    private function _write($handle, $data)
     {
-        
         try {
-            $handle->query('TRUNCATE ' . 
+            $handle->query('TRUNCATE ' .
                 $this->config['table'].'');
             $statement = $handle->prepare('
-                INSERT INTO `' . 
+                INSERT INTO `' .
                 $this->config['table'].'` (
                     type,
                     data,
@@ -262,18 +249,19 @@ class IDS_Caching_Database implements IDS_Caching_Interface
                     now()
                 )
             ');
-    
-            $statement->bindParam('type', 
-                $handle->quote($this->type));
+
+            $statement->bindParam(
+                'type',
+                $handle->quote($this->type)
+            );
             $statement->bindParam('data', serialize($data));
-    
+
             if (!$statement->execute()) {
                 throw new PDOException($statement->errorCode());
             }
-    
         } catch (PDOException $e) {
             die('PDOException: ' . $e->getMessage());
-        }    
+        }
     }
 }
 

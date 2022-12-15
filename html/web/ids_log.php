@@ -1,12 +1,12 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '' );
+define('DVWA_WEB_PAGE_TO_ROOT', '');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-define( 'DVWA_WEB_ROOT_TO_PHPIDS_LOG', 'external/phpids/' . dvwaPhpIdsVersionGet() . '/lib/IDS/tmp/phpids_log.txt' );
-define( 'DVWA_WEB_PAGE_TO_PHPIDS_LOG', DVWA_WEB_PAGE_TO_ROOT.DVWA_WEB_ROOT_TO_PHPIDS_LOG );
+define('DVWA_WEB_ROOT_TO_PHPIDS_LOG', 'external/phpids/' . dvwaPhpIdsVersionGet() . '/lib/IDS/tmp/phpids_log.txt');
+define('DVWA_WEB_PAGE_TO_PHPIDS_LOG', DVWA_WEB_PAGE_TO_ROOT.DVWA_WEB_ROOT_TO_PHPIDS_LOG);
 
-dvwaPageStartup( array( 'authenticated', 'phpids' ) );
+dvwaPageStartup(array( 'authenticated', 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'PHPIDS Log' . $page[ 'title_separator' ].$page[ 'title' ];
@@ -27,6 +27,4 @@ $page[ 'body' ] .= "
 	" . dvwaClearIdsLog() . "
 </div>";
 
-dvwaHtmlEcho( $page );
-
-?>
+dvwaHtmlEcho($page);

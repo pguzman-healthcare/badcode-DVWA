@@ -6,12 +6,15 @@
  */
 class HTMLPurifier_HTMLModule_Proprietary extends HTMLPurifier_HTMLModule
 {
-    
     public $name = 'Proprietary';
-    
-    public function setup($config) {
-        
-        $this->addElement('marquee', 'Inline', 'Flow', 'Common', 
+
+    public function setup($config)
+    {
+        $this->addElement(
+            'marquee',
+            'Inline',
+            'Flow',
+            'Common',
             array(
                 'direction' => 'Enum#left,right,up,down',
                 'behavior' => 'Enum#alternate',
@@ -25,8 +28,5 @@ class HTMLPurifier_HTMLModule_Proprietary extends HTMLPurifier_HTMLModule
                 'vspace' => 'Pixels',
             )
         );
-    
     }
-    
 }
-

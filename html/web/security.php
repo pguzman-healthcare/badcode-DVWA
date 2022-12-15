@@ -1,64 +1,64 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '' );
+define('DVWA_WEB_PAGE_TO_ROOT', '');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-dvwaPageStartup( array( 'authenticated', 'phpids' ) );
+dvwaPageStartup(array( 'authenticated', 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'DVWA Security' . $page[ 'title_separator' ].$page[ 'title' ];
 $page[ 'page_id' ] = 'security';
 
 $securityHtml = '';
-if( isset( $_POST['seclev_submit'] ) ) {
-	// Anti-CSRF
-	checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'security.php' );
+if (isset($_POST['seclev_submit'])) {
+    // Anti-CSRF
+    checkToken($_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'security.php');
 
-	$securityLevel = '';
-	switch( $_POST[ 'security' ] ) {
-		case 'low':
-			$securityLevel = 'low';
-			break;
-		case 'medium':
-			$securityLevel = 'medium';
-			break;
-		case 'high':
-			$securityLevel = 'high';
-			break;
-		default:
-			$securityLevel = 'impossible';
-			break;
-	}
+    $securityLevel = '';
+    switch($_POST[ 'security' ]) {
+        case 'low':
+            $securityLevel = 'low';
+            break;
+        case 'medium':
+            $securityLevel = 'medium';
+            break;
+        case 'high':
+            $securityLevel = 'high';
+            break;
+        default:
+            $securityLevel = 'impossible';
+            break;
+    }
 
-	dvwaSecurityLevelSet( $securityLevel );
-	dvwaMessagePush( "Security level set to {$securityLevel}" );
-	dvwaPageReload();
+    dvwaSecurityLevelSet($securityLevel);
+    dvwaMessagePush("Security level set to {$securityLevel}");
+    dvwaPageReload();
 }
 
-if( isset( $_GET['phpids'] ) ) {
-	switch( $_GET[ 'phpids' ] ) {
-		case 'on':
-			dvwaPhpIdsEnabledSet( true );
-			dvwaMessagePush( "PHPIDS is now enabled" );
-			break;
-		case 'off':
-			dvwaPhpIdsEnabledSet( false );
-			dvwaMessagePush( "PHPIDS is now disabled" );
-			break;
-	}
+if (isset($_GET['phpids'])) {
+    switch($_GET[ 'phpids' ]) {
+        case 'on':
+            dvwaPhpIdsEnabledSet(true);
+            dvwaMessagePush("PHPIDS is now enabled");
+            break;
+        case 'off':
+            dvwaPhpIdsEnabledSet(false);
+            dvwaMessagePush("PHPIDS is now disabled");
+            break;
+    }
 
-	dvwaPageReload();
+    dvwaPageReload();
 }
 
 $securityOptionsHtml = '';
 $securityLevelHtml   = '';
-foreach( array( 'low', 'medium', 'high', 'impossible' ) as $securityLevel ) {
-	$selected = '';
-	if( $securityLevel == dvwaSecurityLevelGet() ) {
-		$selected = ' selected="selected"';
-		$securityLevelHtml = "<p>Security level is currently: <em>$securityLevel</em>.<p>";
-	}
-	$securityOptionsHtml .= "<option value=\"{$securityLevel}\"{$selected}>" . ucfirst($securityLevel) . "</option>";
+foreach (array( 'low', 'medium', 'high', 'impossible' ) as $securityLevel) {
+    $selected = '';
+    if ($securityLevel == dvwaSecurityLevelGet()) {
+        $selected = ' selected="selected"';
+        $securityLevelHtml = "<p>Security level is currently: <em>$securityLevel</em>.<p>";
+    }
+    $securityOptionsHtml .= "<option value=\"{$securityLevel}\"{$selected}>" . ucfirst($securityLevel) . "</option>";
 }
 
 $phpIdsHtml = 'PHPIDS is currently: ';
@@ -66,16 +66,15 @@ $phpIdsHtml = 'PHPIDS is currently: ';
 // Able to write to the PHPIDS log file?
 $WarningHtml = '';
 
-if( dvwaPhpIdsIsEnabled() ) {
-	$phpIdsHtml .= '<em>enabled</em>. [<a href="?phpids=off">Disable PHPIDS</a>]';
+if (dvwaPhpIdsIsEnabled()) {
+    $phpIdsHtml .= '<em>enabled</em>. [<a href="?phpids=off">Disable PHPIDS</a>]';
 
-	# Only check if PHPIDS is enabled
-	if( !is_writable( $PHPIDSPath ) ) {
-		$WarningHtml .= "<div class=\"warning\"><em>Cannot write to the PHPIDS log file</em>: ${PHPIDSPath}</div>";
-	}
-}
-else {
-	$phpIdsHtml .= '<em>disabled</em>. [<a href="?phpids=on">Enable PHPIDS</a>]';
+    # Only check if PHPIDS is enabled
+    if (!is_writable($PHPIDSPath)) {
+        $WarningHtml .= "<div class=\"warning\"><em>Cannot write to the PHPIDS log file</em>: ${PHPIDSPath}</div>";
+    }
+} else {
+    $phpIdsHtml .= '<em>disabled</em>. [<a href="?phpids=on">Enable PHPIDS</a>]';
 }
 
 // Anti-CSRF
@@ -113,7 +112,7 @@ $page[ 'body' ] .= "
 
 	<h2>PHPIDS</h2>
 	{$WarningHtml}
-	<p>" . dvwaExternalLinkUrlGet( 'https://github.com/PHPIDS/PHPIDS', 'PHPIDS' ) . " v" . dvwaPhpIdsVersionGet() . " (PHP-Intrusion Detection System) is a security layer for PHP based web applications.</p>
+	<p>" . dvwaExternalLinkUrlGet('https://github.com/PHPIDS/PHPIDS', 'PHPIDS') . " v" . dvwaPhpIdsVersionGet() . " (PHP-Intrusion Detection System) is a security layer for PHP based web applications.</p>
 	<p>PHPIDS works by filtering any user supplied input against a blacklist of potentially malicious code. It is used in DVWA to serve as a live example of how Web Application Firewalls (WAFs) can help improve security and in some cases how WAFs can be circumvented.</p>
 	<p>You can enable PHPIDS across this site for the duration of your session.</p>
 
@@ -122,6 +121,4 @@ $page[ 'body' ] .= "
 	[<a href=\"ids_log.php\">View IDS log</a>]
 </div>";
 
-dvwaHtmlEcho( $page );
-
-?>
+dvwaHtmlEcho($page);

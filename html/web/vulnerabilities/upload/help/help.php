@@ -15,8 +15,8 @@
 		<br /><hr /><br />
 
 		<h3>Objective</h3>
-		<p>Execute any PHP function of your choosing on the target system (such as <?php echo dvwaExternalLinkUrlGet( 'https://secure.php.net/manual/en/function.phpinfo.php', 'phpinfo()' ); ?>
-			or <?php echo dvwaExternalLinkUrlGet( 'https://secure.php.net/manual/en/function.system.php', 'system()' ); ?>) thanks to this file upload vulnerability.</p>
+		<p>Execute any PHP function of your choosing on the target system (such as <?php echo dvwaExternalLinkUrlGet('https://secure.php.net/manual/en/function.phpinfo.php', 'phpinfo()'); ?>
+			or <?php echo dvwaExternalLinkUrlGet('https://secure.php.net/manual/en/function.system.php', 'system()'); ?>) thanks to this file upload vulnerability.</p>
 
 		<br /><hr /><br />
 
@@ -49,6 +49,6 @@
 
 	<br />
 
-	<p>Reference: <?php echo dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Unrestricted_File_Upload' ); ?></p>
+	<p>Reference: <?php echo dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Unrestricted_File_Upload'); ?></p>
 </div>
 

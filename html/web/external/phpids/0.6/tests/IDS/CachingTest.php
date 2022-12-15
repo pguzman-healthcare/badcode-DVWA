@@ -24,25 +24,29 @@ set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__) . '/../
 require_once 'IDS/Init.php';
 require_once 'IDS/Caching/Factory.php';
 
-class IDS_CachingTest extends PHPUnit_Framework_TestCase {
-
-    public function setUp() {
+class IDS_CachingTest extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         $this->path = dirname(__FILE__) . '/../../lib/IDS/Config/Config.ini';
         $this->init = IDS_Init::init($this->path);
     }
 
-	function testCachingNone() {
-    	$this->init->config['Caching']['caching'] = 'none';
-    	$this->assertFalse(IDS_Caching::factory($this->init, 'storage'));
+    public function testCachingNone()
+    {
+        $this->init->config['Caching']['caching'] = 'none';
+        $this->assertFalse(IDS_Caching::factory($this->init, 'storage'));
     }
 
-    function testCachingFile() {
+    public function testCachingFile()
+    {
         $this->init->config['Caching']['caching'] = 'file';
         $this->init->config['Caching']['expiration_time'] = 0;
         $this->assertTrue(IDS_Caching::factory($this->init, 'storage') instanceof IDS_Caching_File);
     }
 
-    function testCachingFileSetCache() {
+    public function testCachingFileSetCache()
+    {
         $this->init->config['Caching']['caching'] = 'file';
         $this->init->config['Caching']['expiration_time'] = 0;
         $cache = IDS_Caching::factory($this->init, 'storage');
@@ -50,7 +54,8 @@ class IDS_CachingTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($cache instanceof IDS_Caching_File);
     }
 
-    function testCachingFileGetCache() {
+    public function testCachingFileGetCache()
+    {
         $this->init->config['Caching']['caching'] = 'file';
         $this->init->config['Caching']['path'] =  dirname(__FILE__) . '/../../lib/IDS/tmp/default_filter.cache';
         $this->init->config['Caching']['expiration_time'] = 0;
@@ -59,12 +64,14 @@ class IDS_CachingTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($cache->getCache(), array(1,2,3,4));
     }
 
-    function testCachingSession() {
+    public function testCachingSession()
+    {
         $this->init->config['Caching']['caching'] = 'session';
         $this->assertTrue(IDS_Caching::factory($this->init, 'storage') instanceof IDS_Caching_Session);
     }
 
-    function testCachingSessionSetCache() {
+    public function testCachingSessionSetCache()
+    {
         $this->init->config['Caching']['caching'] = 'session';
 
         $cache = IDS_Caching::factory($this->init, 'storage');
@@ -72,7 +79,8 @@ class IDS_CachingTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($cache instanceof IDS_Caching_Session);
     }
 
-    function testCachingSessionGetCache() {
+    public function testCachingSessionGetCache()
+    {
         $this->init->config['Caching']['caching'] = 'session';
 
         $cache = IDS_Caching::factory($this->init, 'storage');
@@ -80,7 +88,8 @@ class IDS_CachingTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($cache->getCache(), array(1,2,3,4));
     }
 
-    function testCachingSessionGetCacheDestroyed() {
+    public function testCachingSessionGetCacheDestroyed()
+    {
         $this->init->config['Caching']['caching'] = 'session';
 
         $cache = IDS_Caching::factory($this->init, 'storage');
@@ -89,9 +98,10 @@ class IDS_CachingTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($cache->getCache());
     }
 
-    function tearDown() {
-    	@unlink(dirname(__FILE__) . '/../../lib/IDS/tmp/default_filter.cache');
-    	@unlink(dirname(__FILE__) . '/../../lib/IDS/tmp/memcache.timestamp');
+    public function tearDown()
+    {
+        @unlink(dirname(__FILE__) . '/../../lib/IDS/tmp/default_filter.cache');
+        @unlink(dirname(__FILE__) . '/../../lib/IDS/tmp/memcache.timestamp');
     }
 }
 

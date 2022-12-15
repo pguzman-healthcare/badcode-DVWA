@@ -5,22 +5,23 @@
  */
 class HTMLPurifier_DefinitionCacheFactory
 {
-    
     protected $caches = array('Serializer' => array());
     protected $implementations = array();
     protected $decorators = array();
-    
+
     /**
      * Initialize default decorators
      */
-    public function setup() {
+    public function setup()
+    {
         $this->addDecorator('Cleanup');
     }
-    
+
     /**
      * Retrieves an instance of global definition cache factory.
      */
-    public static function instance($prototype = null) {
+    public static function instance($prototype = null)
+    {
         static $instance;
         if ($prototype !== null) {
             $instance = $prototype;
@@ -30,22 +31,24 @@ class HTMLPurifier_DefinitionCacheFactory
         }
         return $instance;
     }
-    
+
     /**
      * Registers a new definition cache object
      * @param $short Short name of cache object, for reference
-     * @param $long Full class name of cache object, for construction 
+     * @param $long Full class name of cache object, for construction
      */
-    public function register($short, $long) {
+    public function register($short, $long)
+    {
         $this->implementations[$short] = $long;
     }
-    
+
     /**
      * Factory method that creates a cache object based on configuration
      * @param $name Name of definitions handled by cache
      * @param $config Instance of HTMLPurifier_Config
      */
-    public function create($type, $config) {
+    public function create($type, $config)
+    {
         $method = $config->get('Cache', 'DefinitionImpl');
         if ($method === null) {
             return new HTMLPurifier_DefinitionCache_Null($type);
@@ -54,8 +57,8 @@ class HTMLPurifier_DefinitionCacheFactory
             return $this->caches[$method][$type];
         }
         if (
-          isset($this->implementations[$method]) &&
-          class_exists($class = $this->implementations[$method], false)
+            isset($this->implementations[$method]) &&
+            class_exists($class = $this->implementations[$method], false)
         ) {
             $cache = new $class($type);
         } else {
@@ -73,18 +76,17 @@ class HTMLPurifier_DefinitionCacheFactory
         $this->caches[$method][$type] = $cache;
         return $this->caches[$method][$type];
     }
-    
+
     /**
      * Registers a decorator to add to all new cache objects
-     * @param 
+     * @param
      */
-    public function addDecorator($decorator) {
+    public function addDecorator($decorator)
+    {
         if (is_string($decorator)) {
             $class = "HTMLPurifier_DefinitionCache_Decorator_$decorator";
-            $decorator = new $class;
+            $decorator = new $class();
         }
         $this->decorators[$decorator->name] = $decorator;
     }
-    
 }
-

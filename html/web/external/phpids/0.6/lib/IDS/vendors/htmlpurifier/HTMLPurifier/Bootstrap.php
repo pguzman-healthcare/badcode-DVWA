@@ -29,23 +29,28 @@ if (!defined('PHP_EOL')) {
  */
 class HTMLPurifier_Bootstrap
 {
-    
     /**
      * Autoload function for HTML Purifier
      * @param $class Class to load
      */
-    public static function autoload($class) {
+    public static function autoload($class)
+    {
         $file = HTMLPurifier_Bootstrap::getPath($class);
-        if (!$file) return false;
+        if (!$file) {
+            return false;
+        }
         require HTMLPURIFIER_PREFIX . '/' . $file;
         return true;
     }
-    
+
     /**
      * Returns the path for a specific class.
      */
-    public static function getPath($class) {
-        if (strncmp('HTMLPurifier', $class, 12) !== 0) return false;
+    public static function getPath($class)
+    {
+        if (strncmp('HTMLPurifier', $class, 12) !== 0) {
+            return false;
+        }
         // Custom implementations
         if (strncmp('HTMLPurifier_Language_', $class, 22) === 0) {
             $code = str_replace('_', '-', substr($class, 22));
@@ -53,16 +58,19 @@ class HTMLPurifier_Bootstrap
         } else {
             $file = str_replace('_', '/', $class) . '.php';
         }
-        if (!file_exists(HTMLPURIFIER_PREFIX . '/' . $file)) return false;
+        if (!file_exists(HTMLPURIFIER_PREFIX . '/' . $file)) {
+            return false;
+        }
         return $file;
     }
-    
+
     /**
      * "Pre-registers" our autoloader on the SPL stack.
      */
-    public static function registerAutoload() {
+    public static function registerAutoload()
+    {
         $autoload = array('HTMLPurifier_Bootstrap', 'autoload');
-        if ( ($funcs = spl_autoload_functions()) === false ) {
+        if (($funcs = spl_autoload_functions()) === false) {
             spl_autoload_register($autoload);
         } elseif (function_exists('spl_autoload_unregister')) {
             $compat = version_compare(PHP_VERSION, '5.1.2', '<=') &&
@@ -84,13 +92,16 @@ class HTMLPurifier_Bootstrap
                     }
                     // Suprisingly, spl_autoload_register supports the
                     // Class::staticMethod callback format, although call_user_func doesn't
-                    if ($compat) $func = implode('::', $func);
+                    if ($compat) {
+                        $func = implode('::', $func);
+                    }
                 }
                 spl_autoload_unregister($func);
             }
             spl_autoload_register($autoload);
-            foreach ($funcs as $func) spl_autoload_register($func);
+            foreach ($funcs as $func) {
+                spl_autoload_register($func);
+            }
         }
     }
-    
 }

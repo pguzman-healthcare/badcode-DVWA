@@ -36,7 +36,7 @@
 		<h3>Medium Level</h3>
 		<p>The developer has read up on some of the issues with LFI/RFI, and decided to filter the input. However, the patterns that are used, isn't enough.</p>
 		<pre>Spoiler: <span class="spoiler">LFI: Possible, due to it only cycling through the pattern matching once</span>.
-			Spoiler: <span class="spoiler">RFI: <?php echo dvwaExternalLinkUrlGet( 'https://secure.php.net/manual/en/wrappers.php', 'PHP Streams' ); ?></span>.</pre>
+			Spoiler: <span class="spoiler">RFI: <?php echo dvwaExternalLinkUrlGet('https://secure.php.net/manual/en/wrappers.php', 'PHP Streams'); ?></span>.</pre>
 
 		<br />
 
@@ -58,6 +58,6 @@
 
 	<br />
 
-	<p>Reference: <?php echo dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Top_10_2007-A3' ); ?></p>
+	<p>Reference: <?php echo dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Top_10_2007-A3'); ?></p>
 
 </div>
