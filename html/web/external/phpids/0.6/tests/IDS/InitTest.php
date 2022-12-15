@@ -23,32 +23,38 @@ require_once 'PHPUnit/Framework/TestCase.php';
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__) . '/../../lib');
 require_once 'IDS/Init.php';
 
-class IDS_InitTest extends PHPUnit_Framework_TestCase {
-
-    public function setUp() {
+class IDS_InitTest extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         $this->path = dirname(__FILE__) . '/../../lib/IDS/Config/Config.ini';
         $this->init = IDS_Init::init($this->path);
     }
 
-    function testInit() {
+    public function testInit()
+    {
         $this->assertTrue($this->init instanceof IDS_Init);
     }
 
-    function testInitConfig() {
+    public function testInitConfig()
+    {
         $keys = array('General', 'Logging', 'Caching');
         $this->assertEquals($keys, array_keys($this->init->config));
     }
 
-    function testInitClone() {
+    public function testInitClone()
+    {
         $config2 = clone $this->init;
         $this->assertEquals($config2, $this->init);
     }
 
-    function testInitGetConfigPath() {
+    public function testInitGetConfigPath()
+    {
         $this->assertEquals($this->init->getConfigPath(), $this->path);
     }
 
-    function testInitSetConfigOverwrite() {
+    public function testInitSetConfigOverwrite()
+    {
         $this->init->setConfig(array('General' => array('filter_type' => 'json')), true);
         $this->assertEquals($this->init->config['General']['filter_type'], 'json');
 
@@ -62,18 +68,20 @@ class IDS_InitTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    function testInitSetConfigNoOverwrite() {
+    public function testInitSetConfigNoOverwrite()
+    {
         $this->init->setConfig(array('General' => array('filter_type' => 'xml')), true);
         $this->init->setConfig(array('General' => array('filter_type' => 'json')));
         $this->assertEquals($this->init->config['General']['filter_type'], 'xml');
     }
 
-    function testInitGetConfig() {
+    public function testInitGetConfig()
+    {
         $data = $this->init->getConfig();
         $this->assertEquals($this->init->config, $data);
     }
 
-    function testInstanciatingInitObjectWithoutPassingConfigFile()
+    public function testInstanciatingInitObjectWithoutPassingConfigFile()
     {
         $init = IDS_Init::init();
         $this->assertType('IDS_Init', $init);

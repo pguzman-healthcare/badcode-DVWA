@@ -1,9 +1,9 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '../../' );
+define('DVWA_WEB_PAGE_TO_ROOT', '../../');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-dvwaPageStartup( array( 'authenticated', 'phpids' ) );
+dvwaPageStartup(array( 'authenticated', 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'Vulnerability: Brute Force' . $page[ 'title_separator' ].$page[ 'title' ];
@@ -14,20 +14,20 @@ dvwaDatabaseConnect();
 
 $method            = 'GET';
 $vulnerabilityFile = '';
-switch( $_COOKIE[ 'security' ] ) {
-	case 'low':
-		$vulnerabilityFile = 'low.php';
-		break;
-	case 'medium':
-		$vulnerabilityFile = 'medium.php';
-		break;
-	case 'high':
-		$vulnerabilityFile = 'high.php';
-		break;
-	default:
-		$vulnerabilityFile = 'impossible.php';
-		$method = 'POST';
-		break;
+switch($_COOKIE[ 'security' ]) {
+    case 'low':
+        $vulnerabilityFile = 'low.php';
+        break;
+    case 'medium':
+        $vulnerabilityFile = 'medium.php';
+        break;
+    case 'high':
+        $vulnerabilityFile = 'high.php';
+        break;
+    default:
+        $vulnerabilityFile = 'impossible.php';
+        $method = 'POST';
+        break;
 }
 
 require_once DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/brute/source/{$vulnerabilityFile}";
@@ -47,8 +47,9 @@ $page[ 'body' ] .= "
 			<br />
 			<input type=\"submit\" value=\"Login\" name=\"Login\">\n";
 
-if( $vulnerabilityFile == 'high.php' || $vulnerabilityFile == 'impossible.php' )
-	$page[ 'body' ] .= "			" . tokenField();
+if ($vulnerabilityFile == 'high.php' || $vulnerabilityFile == 'impossible.php') {
+    $page[ 'body' ] .= "			" . tokenField();
+}
 
 $page[ 'body' ] .= "
 		</form>
@@ -57,12 +58,10 @@ $page[ 'body' ] .= "
 
 	<h2>More Information</h2>
 	<ul>
-		<li>" . dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Testing_for_Brute_Force_(OWASP-AT-004)' ) . "</li>
-		<li>" . dvwaExternalLinkUrlGet( 'http://www.symantec.com/connect/articles/password-crackers-ensuring-security-your-password' ) . "</li>
-		<li>" . dvwaExternalLinkUrlGet( 'http://www.sillychicken.co.nz/Security/how-to-brute-force-http-forms-in-windows.html' ) . "</li>
+		<li>" . dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Testing_for_Brute_Force_(OWASP-AT-004)') . "</li>
+		<li>" . dvwaExternalLinkUrlGet('http://www.symantec.com/connect/articles/password-crackers-ensuring-security-your-password') . "</li>
+		<li>" . dvwaExternalLinkUrlGet('http://www.sillychicken.co.nz/Security/how-to-brute-force-http-forms-in-windows.html') . "</li>
 	</ul>
 </div>\n";
 
-dvwaHtmlEcho( $page );
-
-?>
+dvwaHtmlEcho($page);

@@ -1,9 +1,9 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '../../' );
+define('DVWA_WEB_PAGE_TO_ROOT', '../../');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-dvwaPageStartup( array( 'authenticated', 'phpids' ) );
+dvwaPageStartup(array( 'authenticated', 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'Vulnerability: Weak Session IDs' . $page[ 'title_separator' ].$page[ 'title' ];
@@ -14,20 +14,20 @@ dvwaDatabaseConnect();
 
 $method            = 'GET';
 $vulnerabilityFile = '';
-switch( $_COOKIE[ 'security' ] ) {
-	case 'low':
-		$vulnerabilityFile = 'low.php';
-		break;
-	case 'medium':
-		$vulnerabilityFile = 'medium.php';
-		break;
-	case 'high':
-		$vulnerabilityFile = 'high.php';
-		break;
-	default:
-		$vulnerabilityFile = 'impossible.php';
-		$method = 'POST';
-		break;
+switch($_COOKIE[ 'security' ]) {
+    case 'low':
+        $vulnerabilityFile = 'low.php';
+        break;
+    case 'medium':
+        $vulnerabilityFile = 'medium.php';
+        break;
+    case 'high':
+        $vulnerabilityFile = 'high.php';
+        break;
+    default:
+        $vulnerabilityFile = 'impossible.php';
+        $method = 'POST';
+        break;
 }
 
 require_once DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/weak_id/source/{$vulnerabilityFile}";
@@ -49,12 +49,10 @@ EOF;
 /*
 Maybe display this, don't think it is needed though
 if (isset ($cookie_value)) {
-	$page[ 'body' ] .= <<<EOF
-	The new cookie value is $cookie_value
+    $page[ 'body' ] .= <<<EOF
+    The new cookie value is $cookie_value
 EOF;
 }
 */
 
-dvwaHtmlEcho( $page );
-
-?>
+dvwaHtmlEcho($page);

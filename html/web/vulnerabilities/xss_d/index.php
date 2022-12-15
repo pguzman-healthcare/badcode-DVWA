@@ -1,9 +1,9 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '../../' );
+define('DVWA_WEB_PAGE_TO_ROOT', '../../');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-dvwaPageStartup( array( 'authenticated', 'phpids' ) );
+dvwaPageStartup(array( 'authenticated', 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'Vulnerability: DOM Based Cross Site Scripting (XSS)' . $page[ 'title_separator' ].$page[ 'title' ];
@@ -14,19 +14,19 @@ $page[ 'source_button' ] = 'xss_d';
 dvwaDatabaseConnect();
 
 $vulnerabilityFile = '';
-switch( $_COOKIE[ 'security' ] ) {
-	case 'low':
-		$vulnerabilityFile = 'low.php';
-		break;
-	case 'medium':
-		$vulnerabilityFile = 'medium.php';
-		break;
-	case 'high':
-		$vulnerabilityFile = 'high.php';
-		break;
-	default:
-		$vulnerabilityFile = 'impossible.php';
-		break;
+switch($_COOKIE[ 'security' ]) {
+    case 'low':
+        $vulnerabilityFile = 'low.php';
+        break;
+    case 'medium':
+        $vulnerabilityFile = 'medium.php';
+        break;
+    case 'high':
+        $vulnerabilityFile = 'high.php';
+        break;
+    default:
+        $vulnerabilityFile = 'impossible.php';
+        break;
 }
 
 require_once DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/xss_d/source/{$vulnerabilityFile}";
@@ -34,7 +34,7 @@ require_once DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/xss_d/source/{$vulnerabili
 # For the impossible level, don't decode the querystring
 $decodeURI = "decodeURI";
 if ($vulnerabilityFile == 'impossible.php') {
-	$decodeURI = "";
+    $decodeURI = "";
 }
 
 $page[ 'body' ] = <<<EOF
@@ -68,12 +68,10 @@ EOF;
 $page[ 'body' ] .= "
 	<h2>More Information</h2>
 	<ul>
-		<li>" . dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)' ) . "</li>
-		<li>" . dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)' ) . "</li>
-		<li>" . dvwaExternalLinkUrlGet( 'https://www.acunetix.com/blog/articles/dom-xss-explained/' ) . "</li>
+		<li>" . dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)') . "</li>
+		<li>" . dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)') . "</li>
+		<li>" . dvwaExternalLinkUrlGet('https://www.acunetix.com/blog/articles/dom-xss-explained/') . "</li>
 	</ul>
 </div>\n";
 
-dvwaHtmlEcho( $page );
-
-?>
+dvwaHtmlEcho($page);

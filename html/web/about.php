@@ -1,9 +1,9 @@
 <?php
 
-define( 'DVWA_WEB_PAGE_TO_ROOT', '' );
+define('DVWA_WEB_PAGE_TO_ROOT', '');
 require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
 
-dvwaPageStartup( array( 'phpids' ) );
+dvwaPageStartup(array( 'phpids' ));
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ]   = 'About' . $page[ 'title_separator' ].$page[ 'title' ];
@@ -19,28 +19,28 @@ $page[ 'body' ] .= "
 
 	<h2>Links</h2>
 	<ul>
-		<li>Homepage: " . dvwaExternalLinkUrlGet( 'http://www.dvwa.co.uk/' ) . "</li>
-		<li>Project Home: " . dvwaExternalLinkUrlGet( 'https://github.com/RandomStorm/DVWA' ) . "</li>
-		<li>Bug Tracker: " . dvwaExternalLinkUrlGet( 'https://github.com/RandomStorm/DVWA/issues' ) . "</li>
-		<li>Souce Control: " . dvwaExternalLinkUrlGet( 'https://github.com/RandomStorm/DVWA/commits/master' ) . "</li>
-		<li>Wiki: " . dvwaExternalLinkUrlGet( 'https://github.com/RandomStorm/DVWA/wiki' ) . "</li>
+		<li>Homepage: " . dvwaExternalLinkUrlGet('http://www.dvwa.co.uk/') . "</li>
+		<li>Project Home: " . dvwaExternalLinkUrlGet('https://github.com/RandomStorm/DVWA') . "</li>
+		<li>Bug Tracker: " . dvwaExternalLinkUrlGet('https://github.com/RandomStorm/DVWA/issues') . "</li>
+		<li>Souce Control: " . dvwaExternalLinkUrlGet('https://github.com/RandomStorm/DVWA/commits/master') . "</li>
+		<li>Wiki: " . dvwaExternalLinkUrlGet('https://github.com/RandomStorm/DVWA/wiki') . "</li>
 	</ul>
 
 	<h2>Credits</h2>
 	<ul>
-		<li>Brooks Garrett: " . dvwaExternalLinkUrlGet( 'http://brooksgarrett.com/','www.brooksgarrett.com' ) . "</li>
+		<li>Brooks Garrett: " . dvwaExternalLinkUrlGet('http://brooksgarrett.com/', 'www.brooksgarrett.com') . "</li>
 		<li>Craig</li>
-		<li>g0tmi1k: " . dvwaExternalLinkUrlGet( 'https://blog.g0tmi1k.com/','g0tmi1k.com' ) . "</li>
-		<li>Jamesr: " . dvwaExternalLinkUrlGet( 'https://www.creativenucleus.com/','www.creativenucleus.com' ) . " / " . dvwaExternalLinkUrlGet( 'http://www.designnewcastle.co.uk/','www.designnewcastle.co.uk' ) . "</li>
-		<li>Jason Jones: " . dvwaExternalLinkUrlGet( 'http://www.linux-ninja.com/','www.linux-ninja.com' ) . "</li>
-		<li>RandomStorm: " . dvwaExternalLinkUrlGet( 'https://www.randomstorm.com/','www.randomstorm.com' ) . "</li>
-		<li>Ryan Dewhurst: " . dvwaExternalLinkUrlGet( 'https://www.dewhurstsecurity.com/','www.dewhurstsecurity.com' ) . "</li>
-		<li>Shinkurt: " . dvwaExternalLinkUrlGet( 'http://www.paulosyibelo.com/','www.paulosyibelo.com' ) . "</li>
-		<li>Tedi Heriyanto: " . dvwaExternalLinkUrlGet( 'http://tedi.heriyanto.net/','tedi.heriyanto.net' ) . "</li>
-		<li>Tom Mackenzie: " . dvwaExternalLinkUrlGet( 'https://www.tmacuk.co.uk/','www.tmacuk.co.uk' ) . "</li>
+		<li>g0tmi1k: " . dvwaExternalLinkUrlGet('https://blog.g0tmi1k.com/', 'g0tmi1k.com') . "</li>
+		<li>Jamesr: " . dvwaExternalLinkUrlGet('https://www.creativenucleus.com/', 'www.creativenucleus.com') . " / " . dvwaExternalLinkUrlGet('http://www.designnewcastle.co.uk/', 'www.designnewcastle.co.uk') . "</li>
+		<li>Jason Jones: " . dvwaExternalLinkUrlGet('http://www.linux-ninja.com/', 'www.linux-ninja.com') . "</li>
+		<li>RandomStorm: " . dvwaExternalLinkUrlGet('https://www.randomstorm.com/', 'www.randomstorm.com') . "</li>
+		<li>Ryan Dewhurst: " . dvwaExternalLinkUrlGet('https://www.dewhurstsecurity.com/', 'www.dewhurstsecurity.com') . "</li>
+		<li>Shinkurt: " . dvwaExternalLinkUrlGet('http://www.paulosyibelo.com/', 'www.paulosyibelo.com') . "</li>
+		<li>Tedi Heriyanto: " . dvwaExternalLinkUrlGet('http://tedi.heriyanto.net/', 'tedi.heriyanto.net') . "</li>
+		<li>Tom Mackenzie: " . dvwaExternalLinkUrlGet('https://www.tmacuk.co.uk/', 'www.tmacuk.co.uk') . "</li>
 	</ul>
 	<ul>
-		<li>PHPIDS - Copyright (c) 2007 " . dvwaExternalLinkUrlGet( 'http://github.com/PHPIDS/PHPIDS', 'PHPIDS group' ) . "</li>
+		<li>PHPIDS - Copyright (c) 2007 " . dvwaExternalLinkUrlGet('http://github.com/PHPIDS/PHPIDS', 'PHPIDS group') . "</li>
 	</ul>
 
 	<h2>License</h2>
@@ -54,8 +54,6 @@ $page[ 'body' ] .= "
 	<p>Everyone is welcome to contribute and help make DVWA as successful as it can be. All contributors can have their name and link (if they wish) placed in the credits section. To contribute pick an Issue from the Project Home to work on or submit a patch to the Issues list.</p>
 </div>\n";
 
-dvwaHtmlEcho( $page );
+dvwaHtmlEcho($page);
 
 exit;
-
-?>

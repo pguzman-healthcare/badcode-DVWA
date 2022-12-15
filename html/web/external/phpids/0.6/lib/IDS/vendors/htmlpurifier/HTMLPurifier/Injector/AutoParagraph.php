@@ -8,17 +8,18 @@
  */
 class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
 {
-    
     public $name = 'AutoParagraph';
     public $needed = array('p');
-    
-    private function _pStart() {
+
+    private function _pStart()
+    {
         $par = new HTMLPurifier_Token_Start('p');
         $par->armor['MakeWellFormed_TagClosedError'] = true;
         return $par;
     }
-    
-    public function handleText(&$token) {
+
+    public function handleText(&$token)
+    {
         $text = $token->data;
         // Does the current parent allow <p> tags?
         if ($this->allowsElement('p')) {
@@ -27,7 +28,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 // in the anonymous root node, or a node inside the document.
                 // If the text as a double-newline, the treatment is the same;
                 // if it doesn't, see the next if-block if you're in the document.
-                
+
                 $i = $nesting = null;
                 if (!$this->forwardUntilEndToken($i, $current, $nesting) && $token->is_whitespace) {
                     // State 1.1: ...    ^ (whitespace, then document end)
@@ -36,10 +37,10 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 } else {
                     // State 1.2: PAR1
                     //            ----
-                    
+
                     // State 1.3: PAR1\n\nPAR2
                     //            ------------
-                    
+
                     // State 1.4: <div>PAR1\n\nPAR2 (see State 2)
                     //                 ------------
                     $token = array($this->_pStart());
@@ -48,7 +49,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
             } else {
                 // State 2:   <div>PAR1... (similar to 1.4)
                 //                 ----
-                
+
                 // We're in an element that allows paragraph tags, but we're not
                 // sure if we're going to need them.
                 if ($this->_pLookAhead()) {
@@ -62,7 +63,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 } else {
                     // State 2.2.1: <div>PAR1<div>
                     //                   ----
-                    
+
                     // State 2.2.2: <div>PAR1<b>PAR1</b></div>
                     //                   ----
                 }
@@ -74,7 +75,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         ) {
             // State 3.1: ...<p>PAR1
             //                  ----
-            
+
             // State 3.2: ...<p>PAR1\n\nPAR2
             //                  ------------
             $token = array();
@@ -83,13 +84,14 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         } else {
             // State 4.1: ...<b>PAR1
             //                  ----
-            
+
             // State 4.2: ...<b>PAR1\n\nPAR2
             //                  ------------
         }
     }
-    
-    public function handleElement(&$token) {
+
+    public function handleElement(&$token)
+    {
         // We don't have to check if we're already in a <p> tag for block
         // tokens, because the tag would have been autoclosed by MakeWellFormed.
         if ($this->allowsElement('p')) {
@@ -97,39 +99,38 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 if ($this->_isInline($token)) {
                     // State 1: <div>...<b>
                     //                  ---
-                    
+
                     // Check if this token is adjacent to the parent token
                     // (seek backwards until token isn't whitespace)
                     $i = null;
                     $this->backward($i, $prev);
-                    
+
                     if (!$prev instanceof HTMLPurifier_Token_Start) {
                         // Token wasn't adjacent
-                        
+
                         if (
                             $prev instanceof HTMLPurifier_Token_Text &&
                             substr($prev->data, -2) === "\n\n"
                         ) {
                             // State 1.1.4: <div><p>PAR1</p>\n\n<b>
                             //                                  ---
-                            
+
                             // Quite frankly, this should be handled by splitText
                             $token = array($this->_pStart(), $token);
                         } else {
                             // State 1.1.1: <div><p>PAR1</p><b>
                             //                              ---
-                            
+
                             // State 1.1.2: <div><br /><b>
                             //                         ---
-                            
+
                             // State 1.1.3: <div>PAR<b>
                             //                      ---
                         }
-                        
                     } else {
                         // State 1.2.1: <div><b>
                         //                   ---
-                        
+
                         // Lookahead to see if <p> is needed.
                         if ($this->_pLookAhead()) {
                             // State 1.3.1: <div><b>PAR1\n\nPAR2
@@ -138,7 +139,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                         } else {
                             // State 1.3.2: <div><b>PAR1</b></div>
                             //                   ---
-                            
+
                             // State 1.3.3: <div><b>PAR1</b><div></div>\n\n</div>
                             //                   ---
                         }
@@ -158,7 +159,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                     // State 3.2: <div>
                     //            -----
                 }
-                
+
                 $i = null;
                 if ($this->backward($i, $prev)) {
                     if (
@@ -166,19 +167,21 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                     ) {
                         // State 3.1.1: ...</p>{p}<b>
                         //                        ---
-                        
+
                         // State 3.2.1: ...</p><div>
                         //                     -----
-                        
-                        if (!is_array($token)) $token = array($token);
+
+                        if (!is_array($token)) {
+                            $token = array($token);
+                        }
                         array_unshift($token, new HTMLPurifier_Token_Text("\n\n"));
                     } else {
                         // State 3.1.2: ...</p>\n\n{p}<b>
                         //                            ---
-                        
+
                         // State 3.2.2: ...</p>\n\n<div>
                         //                         -----
-                        
+
                         // Note: PAR<ELEM> cannot occur because PAR would have been
                         // wrapped in <p> tags.
                     }
@@ -187,12 +190,12 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         } else {
             // State 2.2: <ul><li>
             //                ----
-            
+
             // State 2.4: <p><b>
             //               ---
         }
     }
-    
+
     /**
      * Splits up a text in paragraph tokens and appends them
      * to the result stream that will replace the original
@@ -203,12 +206,13 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
      * @param $config Instance of HTMLPurifier_Config
      * @param $context Instance of HTMLPurifier_Context
      */
-    private function _splitText($data, &$result) {
+    private function _splitText($data, &$result)
+    {
         $raw_paragraphs = explode("\n\n", $data);
         $paragraphs  = array(); // without empty paragraphs
         $needs_start = false;
         $needs_end   = false;
-        
+
         $c = count($raw_paragraphs);
         if ($c == 1) {
             // There were no double-newlines, abort quickly. In theory this
@@ -230,7 +234,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                         // a while, and the newline means we should start a new one.
                         $result[] = new HTMLPurifier_Token_End('p');
                         $result[] = new HTMLPurifier_Token_Text("\n\n");
-                        // However, the start token should only be added if 
+                        // However, the start token should only be added if
                         // there is more processing to be done (i.e. there are
                         // real paragraphs in here). If there are none, the
                         // next start paragraph tag will be handled by the
@@ -249,18 +253,18 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                 }
             }
         }
-        
+
         // Check if this was just a giant blob of whitespace. Move this earlier,
         // perhaps?
         if (empty($paragraphs)) {
             return;
         }
-        
+
         // Add the start tag indicated by \n\n at the beginning of $data
         if ($needs_start) {
             $result[] = $this->_pStart();
         }
-        
+
         // Append the paragraphs onto the result
         foreach ($paragraphs as $par) {
             $result[] = new HTMLPurifier_Token_Text($par);
@@ -268,37 +272,41 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
             $result[] = new HTMLPurifier_Token_Text("\n\n");
             $result[] = $this->_pStart();
         }
-        
+
         // Remove trailing start token; Injector will handle this later if
         // it was indeed needed. This prevents from needing to do a lookahead,
         // at the cost of a lookbehind later.
         array_pop($result);
-        
-        // If there is no need for an end tag, remove all of it and let 
+
+        // If there is no need for an end tag, remove all of it and let
         // MakeWellFormed close it later.
         if (!$needs_end) {
             array_pop($result); // removes \n\n
             array_pop($result); // removes </p>
         }
-        
     }
-    
+
     /**
      * Returns true if passed token is inline (and, ergo, allowed in
      * paragraph tags)
      */
-    private function _isInline($token) {
+    private function _isInline($token)
+    {
         return isset($this->htmlDefinition->info['p']->child->elements[$token->name]);
     }
-    
+
     /**
      * Looks ahead in the token list and determines whether or not we need
      * to insert a <p> tag.
      */
-    private function _pLookAhead() {
+    private function _pLookAhead()
+    {
         $this->current($i, $current);
-        if ($current instanceof HTMLPurifier_Token_Start) $nesting = 1;
-        else $nesting = 0;
+        if ($current instanceof HTMLPurifier_Token_Start) {
+            $nesting = 1;
+        } else {
+            $nesting = 0;
+        }
         $ok = false;
         while ($this->forwardUntilEndToken($i, $current, $nesting)) {
             $result = $this->_checkNeedsP($current);
@@ -309,13 +317,14 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         }
         return $ok;
     }
-    
+
     /**
      * Determines if a particular token requires an earlier inline token
      * to get a paragraph. This should be used with _forwardUntilEndToken
      */
-    private function _checkNeedsP($current) {
-        if ($current instanceof HTMLPurifier_Token_Start){
+    private function _checkNeedsP($current)
+    {
+        if ($current instanceof HTMLPurifier_Token_Start) {
             if (!$this->_isInline($current)) {
                 // <div>PAR1<div>
                 //      ----
@@ -334,6 +343,4 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         }
         return null;
     }
-    
 }
-

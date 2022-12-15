@@ -1,7 +1,7 @@
 <?php
 
-if( !defined( 'DVWA_WEB_PAGE_TO_ROOT' ) ) {
-	exit ("Nice try ;-). Use the file include next time!");
+if (!defined('DVWA_WEB_PAGE_TO_ROOT')) {
+    exit("Nice try ;-). Use the file include next time!");
 }
 
 ?>
@@ -17,7 +17,7 @@ $line3 = "--LINE HIDDEN ;)--";
 echo $line3 . "\n\n<br /><br />\n";
 
 $line4 = "NC4pI" . "FRoZSBwb29s" . "IG9uIH" . "RoZSByb29mIG1" . "1c3QgaGF" . "2ZSBh" . "IGxlY" . "Wsu";
-echo base64_decode( $line4 );
+echo base64_decode($line4);
 
 ?>
 

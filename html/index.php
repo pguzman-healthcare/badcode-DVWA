@@ -1,12 +1,11 @@
 <?php
-$con = mysql_connect("localhost","root","toor");
-if (!$con)
-  {
-  die('Could not connect: ' . mysql_error());
-  }
+$con = mysql_connect("localhost", "root", "toor");
+if (!$con) {
+    die('Could not connect: ' . mysql_error());
+}
 
 $sql = "CREATE DATABASE IF NOT EXISTS dvwa";
-mysql_query($sql,$con);
+mysql_query($sql, $con);
 mysql_close($con);
 header("location: /web");
 ?>

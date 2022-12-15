@@ -2,26 +2,26 @@
 
 /**
  * PHPIDS
- * 
+ *
  * Requirements: PHP5, SimpleXML
  *
  * Copyright (c) 2008 PHPIDS group (http://php-ids.org)
  *
  * PHPIDS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License, or 
+ * the Free Software Foundation, version 3 of the License, or
  * (at your option) any later version.
  *
  * PHPIDS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>. 
+ * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>.
  *
  * PHP version 5.1.6+
- * 
+ *
  * @category Security
  * @package  PHPIDS
  * @author   Mario Heiderich <mario.heiderich@gmail.com>
@@ -51,7 +51,6 @@ require_once 'IDS/Caching/Interface.php';
  */
 class IDS_Caching_Memcached implements IDS_Caching_Interface
 {
-
     /**
      * Caching type
      *
@@ -74,12 +73,12 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
     private $path = null;
 
     /**
-     * Flag if the filter storage has been found in memcached 
-     * 
-     * @var boolean 
-     */ 
-    private $isCached = false; 
-    
+     * Flag if the filter storage has been found in memcached
+     *
+     * @var boolean
+     */
+    private $isCached = false;
+
     /**
      * Memcache object
      *
@@ -100,21 +99,20 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
      *
      * @param string $type caching type
      * @param array  $init the IDS_Init object
-     * 
+     *
      * @throws Exception if necessary files aren't writeable
      * @return void
      */
-    public function __construct($type, $init) 
+    public function __construct($type, $init)
     {
-
         $this->type   = $type;
         $this->config = $init->config['Caching'];
-        $this->path   = $init->getBasePath() . $this->config['path'];        
-        
+        $this->path   = $init->getBasePath() . $this->config['path'];
+
         $this->_connect();
 
         if (file_exists($this->path) && !is_writable($this->path)) {
-            throw new Exception('Make sure all files in ' . 
+            throw new Exception('Make sure all files in ' .
             htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') .
                 ' are writeable!');
         }
@@ -125,12 +123,11 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
      *
      * @param string $type caching type
      * @param array  $init the IDS_Init object
-     * 
+     *
      * @return object $this
      */
-    public static function getInstance($type, $init) 
+    public static function getInstance($type, $init)
     {
-
         if (!self::$cachingInstance) {
             self::$cachingInstance = new IDS_Caching_Memcached($type, $init);
         }
@@ -142,29 +139,30 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
      * Writes cache data
      *
      * @param array $data the caching data
-     * 
+     *
      * @throws Exception if necessary files aren't writeable
      * @return object $this
      */
-    public function setCache(array $data) 
+    public function setCache(array $data)
     {
-
         if (!file_exists($this->path)) {
             $handle = fopen($this->path, 'w');
             fclose($handle);
         }
 
         if (!is_writable($this->path)) {
-            throw new Exception('Make sure all files in ' . 
-            htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') . 
+            throw new Exception('Make sure all files in ' .
+            htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') .
                 ' are writeable!');
         }
 
-        if(!$this->isCached) { 
+        if (!$this->isCached) {
             $this->memcache->set(
                 $this->config['key_prefix'] . '.storage',
-                $data, false, $this->config['expiration_time']
-            ); 
+                $data,
+                false,
+                $this->config['expiration_time']
+            );
         }
 
         return $this;
@@ -173,20 +171,19 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
     /**
      * Returns the cached data
      *
-     * Note that this method returns false if either type or file cache is 
+     * Note that this method returns false if either type or file cache is
      * not set
      *
      * @return mixed cache data or false
      */
-    public function getCache() 
+    public function getCache()
     {
-        
         $data = $this->memcache->get(
-            $this->config['key_prefix'] .  
+            $this->config['key_prefix'] .
             '.storage'
-        ); 
-        $this->isCached = !empty($data); 
-        
+        );
+        $this->isCached = !empty($data);
+
         return $data;
     }
 
@@ -196,23 +193,23 @@ class IDS_Caching_Memcached implements IDS_Caching_Interface
      * @throws Exception if connection parameters are insufficient
      * @return void
      */
-    private function _connect() 
+    private function _connect()
     {
-
         if ($this->config['host'] && $this->config['port']) {
             // establish the memcache connection
-            $this->memcache = new Memcache;
-            $this->memcache->pconnect($this->config['host'], 
-                $this->config['port']);
+            $this->memcache = new Memcache();
+            $this->memcache->pconnect(
+                $this->config['host'],
+                $this->config['port']
+            );
             $this->path = $this->config['tmp_path'];
-            
-            if(isset($init->config['General']['base_path']) 
-                && $init->config['General']['base_path'] 
-                && isset($init->config['General']['use_base_path']) 
+
+            if (isset($init->config['General']['base_path'])
+                && $init->config['General']['base_path']
+                && isset($init->config['General']['use_base_path'])
                 && $init->config['General']['use_base_path']) {
                 $this->source = $init->config['General']['base_path'] . $this->path;
-            }            
-            
+            }
         } else {
             throw new Exception('Insufficient connection parameters');
         }

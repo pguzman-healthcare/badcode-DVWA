@@ -28,19 +28,19 @@ PHPUnit_Util_Filter::addDirectoryToFilter(dirname(__FILE__) . '/../lib/IDS/vendo
 
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-	define('PHPUnit_MAIN_METHOD', 'allTests');
+    define('PHPUnit_MAIN_METHOD', 'allTests');
 }
 
 
 class allTests
 {
-	public static function main()
-	{
-		PHPUnit_TextUI_TestRunner::run(self::suite());
-	}
+    public static function main()
+    {
+        PHPUnit_TextUI_TestRunner::run(self::suite());
+    }
 
-	public static function suite()
-	{
+    public static function suite()
+    {
         $suite = new PHPUnit_Framework_TestSuite('PHPIDS');
         require_once 'IDS/MonitorTest.php';
         $suite->addTestSuite('IDS_MonitorTest');
@@ -57,11 +57,11 @@ class allTests
         require_once 'IDS/EventTest.php';
         $suite->addTestSuite('IDS_EventTest');
         return $suite;
-	}
+    }
 }
 
 if (PHPUnit_MAIN_METHOD == 'allTests') {
-	allTests::main();
+    allTests::main();
 }
 
 /**

@@ -6,31 +6,33 @@
  */
 class HTMLPurifier_Encoder
 {
-    
     /**
      * Constructor throws fatal error if you attempt to instantiate class
      */
-    private function __construct() {
+    private function __construct()
+    {
         trigger_error('Cannot instantiate encoder, call methods statically', E_USER_ERROR);
     }
-    
+
     /**
      * Error-handler that mutes errors, alternative to shut-up operator.
      */
-    private static function muteErrorHandler() {}
-    
+    private static function muteErrorHandler()
+    {
+    }
+
     /**
      * Cleans a UTF-8 string for well-formedness and SGML validity
-     * 
+     *
      * It will parse according to UTF-8 and return a valid UTF8 string, with
      * non-SGML codepoints excluded.
-     * 
+     *
      * @note Just for reference, the non-SGML code points are 0 to 31 and
      *       127 to 159, inclusive.  However, we allow code points 9, 10
      *       and 13, which are the tab, line feed and carriage return
      *       respectively. 128 and above the code points map to multibyte
      *       UTF-8 representations.
-     * 
+     *
      * @note Fallback code adapted from utf8ToUnicode by Henri Sivonen and
      *       hsivonen@iki.fi at <http://iki.fi/hsivonen/php-utf8/> under the
      *       LGPL license.  Notes on what changed are inside, but in general,
@@ -44,8 +46,8 @@ class HTMLPurifier_Encoder
      *       would need that, and I'm probably not going to implement them.
      *       Once again, PHP 6 should solve all our problems.
      */
-    public static function cleanUTF8($str, $force_php = false) {
-        
+    public static function cleanUTF8($str, $force_php = false)
+    {
         // UTF-8 validity is checked since PHP 4.3.5
         // This is an optimization: if the string is already valid UTF-8, no
         // need to do PHP stuff. 99% of the time, this will be the case.
@@ -54,31 +56,31 @@ class HTMLPurifier_Encoder
         if (preg_match('/^[\x{9}\x{A}\x{D}\x{20}-\x{7E}\x{A0}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]*$/Du', $str)) {
             return $str;
         }
-        
+
         $mState = 0; // cached expected number of octets after the current octet
                      // until the beginning of the next UTF8 character sequence
         $mUcs4  = 0; // cached Unicode character
         $mBytes = 1; // cached expected number of octets in the current sequence
-        
+
         // original code involved an $out that was an array of Unicode
         // codepoints.  Instead of having to convert back into UTF-8, we've
         // decided to directly append valid UTF-8 characters onto a string
         // $out once they're done.  $char accumulates raw bytes, while $mUcs4
         // turns into the Unicode code point, so there's some redundancy.
-        
+
         $out = '';
         $char = '';
-        
+
         $len = strlen($str);
-        for($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < $len; $i++) {
             $in = ord($str{$i});
             $char .= $str[$i]; // append byte to char
             if (0 == $mState) {
-                // When mState is zero we expect either a US-ASCII character 
+                // When mState is zero we expect either a US-ASCII character
                 // or a multi-octet sequence.
                 if (0 == (0x80 & ($in))) {
                     // US-ASCII, pass straight through.
-                    if (($in <= 31 || $in == 127) && 
+                    if (($in <= 31 || $in == 127) &&
                         !($in == 9 || $in == 13 || $in == 10) // save \r\t\n
                     ) {
                         // control characters, remove
@@ -108,12 +110,12 @@ class HTMLPurifier_Encoder
                     $mBytes = 4;
                 } elseif (0xF8 == (0xFC & ($in))) {
                     // First octet of 5 octet sequence.
-                    // 
-                    // This is illegal because the encoded codepoint must be 
+                    //
+                    // This is illegal because the encoded codepoint must be
                     // either:
                     // (a) not the shortest form or
                     // (b) outside the Unicode range of 0-0x10FFFF.
-                    // Rather than trying to resynchronize, we will carry on 
+                    // Rather than trying to resynchronize, we will carry on
                     // until the end of the sequence and let the later error
                     // handling code catch it.
                     $mUcs4 = ($in);
@@ -128,7 +130,7 @@ class HTMLPurifier_Encoder
                     $mState = 5;
                     $mBytes = 6;
                 } else {
-                    // Current octet is neither in the US-ASCII range nor a 
+                    // Current octet is neither in the US-ASCII range nor a
                     // legal first octet of a multi-octet sequence.
                     $mState = 0;
                     $mUcs4  = 0;
@@ -144,13 +146,13 @@ class HTMLPurifier_Encoder
                     $tmp = $in;
                     $tmp = ($tmp & 0x0000003F) << $shift;
                     $mUcs4 |= $tmp;
-                    
+
                     if (0 == --$mState) {
                         // End of the multi-octet sequence. mUcs4 now contains
                         // the final Unicode codepoint to be output
-                        
+
                         // Check for illegal sequences and codepoints.
-                        
+
                         // From Unicode 3.1, non-shortest form is illegal
                         if (((2 == $mBytes) && ($mUcs4 < 0x0080)) ||
                             ((3 == $mBytes) && ($mUcs4 < 0x0800)) ||
@@ -161,7 +163,6 @@ class HTMLPurifier_Encoder
                             // Codepoints outside the Unicode range are illegal
                             ($mUcs4 > 0x10FFFF)
                         ) {
-                            
                         } elseif (0xFEFF != $mUcs4 && // omit BOM
                             // check for valid Char unicode codepoints
                             (
@@ -196,7 +197,7 @@ class HTMLPurifier_Encoder
         }
         return $out;
     }
-    
+
     /**
      * Translates a Unicode codepoint into its corresponding UTF-8 character.
      * @note Based on Feyd's function at
@@ -209,7 +210,7 @@ class HTMLPurifier_Encoder
      *       maintenance/generate-entity-file.php (although this is superior,
      *       due to its sanity checks).
      */
-    
+
     // +----------+----------+----------+----------+
     // | 33222222 | 22221111 | 111111   |          |
     // | 10987654 | 32109876 | 54321098 | 76543210 | bit
@@ -221,17 +222,18 @@ class HTMLPurifier_Encoder
     // +----------+----------+----------+----------+
     // | 00000000 | 00011111 | 11111111 | 11111111 | Theoretical upper limit of legal scalars: 2097151 (0x001FFFFF)
     // | 00000000 | 00010000 | 11111111 | 11111111 | Defined upper limit of legal scalar codes
-    // +----------+----------+----------+----------+ 
-    
-    public static function unichr($code) {
-        if($code > 1114111 or $code < 0 or
-          ($code >= 55296 and $code <= 57343) ) {
+    // +----------+----------+----------+----------+
+
+    public static function unichr($code)
+    {
+        if ($code > 1114111 or $code < 0 or
+          ($code >= 55296 and $code <= 57343)) {
             // bits are set outside the "valid" range as defined
-            // by UNICODE 4.1.0 
+            // by UNICODE 4.1.0
             return '';
         }
-        
-        $x = $y = $z = $w = 0; 
+
+        $x = $y = $z = $w = 0;
         if ($code < 128) {
             // regular ASCII character
             $x = $code;
@@ -242,32 +244,43 @@ class HTMLPurifier_Encoder
                 $y = (($code & 2047) >> 6) | 192;
             } else {
                 $y = (($code & 4032) >> 6) | 128;
-                if($code < 65536) {
+                if ($code < 65536) {
                     $z = (($code >> 12) & 15) | 224;
                 } else {
                     $z = (($code >> 12) & 63) | 128;
                     $w = (($code >> 18) & 7)  | 240;
                 }
-            } 
+            }
         }
         // set up the actual character
         $ret = '';
-        if($w) $ret .= chr($w);
-        if($z) $ret .= chr($z);
-        if($y) $ret .= chr($y);
-        $ret .= chr($x); 
-        
+        if ($w) {
+            $ret .= chr($w);
+        }
+        if ($z) {
+            $ret .= chr($z);
+        }
+        if ($y) {
+            $ret .= chr($y);
+        }
+        $ret .= chr($x);
+
         return $ret;
     }
-    
+
     /**
      * Converts a string to UTF-8 based on configuration.
      */
-    public static function convertToUTF8($str, $config, $context) {
+    public static function convertToUTF8($str, $config, $context)
+    {
         $encoding = $config->get('Core', 'Encoding');
-        if ($encoding === 'utf-8') return $str;
+        if ($encoding === 'utf-8') {
+            return $str;
+        }
         static $iconv = null;
-        if ($iconv === null) $iconv = function_exists('iconv');
+        if ($iconv === null) {
+            $iconv = function_exists('iconv');
+        }
         set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
         if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
             $str = iconv($encoding, 'utf-8//IGNORE', $str);
@@ -290,17 +303,22 @@ class HTMLPurifier_Encoder
         }
         trigger_error('Encoding not supported, please install iconv', E_USER_ERROR);
     }
-    
+
     /**
      * Converts a string from UTF-8 based on configuration.
      * @note Currently, this is a lossy conversion, with unexpressable
      *       characters being omitted.
      */
-    public static function convertFromUTF8($str, $config, $context) {
+    public static function convertFromUTF8($str, $config, $context)
+    {
         $encoding = $config->get('Core', 'Encoding');
-        if ($encoding === 'utf-8') return $str;
+        if ($encoding === 'utf-8') {
+            return $str;
+        }
         static $iconv = null;
-        if ($iconv === null) $iconv = function_exists('iconv');
+        if ($iconv === null) {
+            $iconv = function_exists('iconv');
+        }
         if ($escape = $config->get('Core', 'EscapeNonASCIICharacters')) {
             $str = HTMLPurifier_Encoder::convertToASCIIDumbLossless($str);
         }
@@ -310,7 +328,9 @@ class HTMLPurifier_Encoder
             $ascii_fix = HTMLPurifier_Encoder::testEncodingSupportsASCII($encoding);
             if (!$escape && !empty($ascii_fix)) {
                 $clear_fix = array();
-                foreach ($ascii_fix as $utf8 => $native) $clear_fix[$utf8] = '';
+                foreach ($ascii_fix as $utf8 => $native) {
+                    $clear_fix[$utf8] = '';
+                }
                 $str = strtr($str, $clear_fix);
             }
             $str = strtr($str, array_flip($ascii_fix));
@@ -325,7 +345,7 @@ class HTMLPurifier_Encoder
         }
         trigger_error('Encoding not supported', E_USER_ERROR);
     }
-    
+
     /**
      * Lossless (character-wise) conversion of HTML to ASCII
      * @param $str UTF-8 string to be converted to ASCII
@@ -342,27 +362,28 @@ class HTMLPurifier_Encoder
      * @note Sort of with cleanUTF8() but it assumes that $str is
      *       well-formed UTF-8
      */
-    public static function convertToASCIIDumbLossless($str) {
+    public static function convertToASCIIDumbLossless($str)
+    {
         $bytesleft = 0;
         $result = '';
         $working = 0;
         $len = strlen($str);
-        for( $i = 0; $i < $len; $i++ ) {
-            $bytevalue = ord( $str[$i] );
-            if( $bytevalue <= 0x7F ) { //0xxx xxxx
-                $result .= chr( $bytevalue );
+        for ($i = 0; $i < $len; $i++) {
+            $bytevalue = ord($str[$i]);
+            if ($bytevalue <= 0x7F) { //0xxx xxxx
+                $result .= chr($bytevalue);
                 $bytesleft = 0;
-            } elseif( $bytevalue <= 0xBF ) { //10xx xxxx
+            } elseif ($bytevalue <= 0xBF) { //10xx xxxx
                 $working = $working << 6;
                 $working += ($bytevalue & 0x3F);
                 $bytesleft--;
-                if( $bytesleft <= 0 ) {
+                if ($bytesleft <= 0) {
                     $result .= "&#" . $working . ";";
                 }
-            } elseif( $bytevalue <= 0xDF ) { //110x xxxx
+            } elseif ($bytevalue <= 0xDF) { //110x xxxx
                 $working = $bytevalue & 0x1F;
                 $bytesleft = 1;
-            } elseif( $bytevalue <= 0xEF ) { //1110 xxxx
+            } elseif ($bytevalue <= 0xEF) { //1110 xxxx
                 $working = $bytevalue & 0x0F;
                 $bytesleft = 2;
             } else { //1111 0xxx
@@ -372,22 +393,25 @@ class HTMLPurifier_Encoder
         }
         return $result;
     }
-    
+
     /**
      * This expensive function tests whether or not a given character
      * encoding supports ASCII. 7/8-bit encodings like Shift_JIS will
      * fail this test, and require special processing. Variable width
      * encodings shouldn't ever fail.
-     * 
+     *
      * @param string $encoding Encoding name to test, as per iconv format
      * @param bool $bypass Whether or not to bypass the precompiled arrays.
      * @return Array of UTF-8 characters to their corresponding ASCII,
      *      which can be used to "undo" any overzealous iconv action.
      */
-    public static function testEncodingSupportsASCII($encoding, $bypass = false) {
+    public static function testEncodingSupportsASCII($encoding, $bypass = false)
+    {
         static $encodings = array();
         if (!$bypass) {
-            if (isset($encodings[$encoding])) return $encodings[$encoding];
+            if (isset($encodings[$encoding])) {
+                return $encodings[$encoding];
+            }
             $lenc = strtolower($encoding);
             switch ($lenc) {
                 case 'shift_jis':
@@ -395,11 +419,15 @@ class HTMLPurifier_Encoder
                 case 'johab':
                     return array("\xE2\x82\xA9" => '\\');
             }
-            if (strpos($lenc, 'iso-8859-') === 0) return array();
+            if (strpos($lenc, 'iso-8859-') === 0) {
+                return array();
+            }
         }
         $ret = array();
         set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
-        if (iconv('UTF-8', $encoding, 'a') === false) return false;
+        if (iconv('UTF-8', $encoding, 'a') === false) {
+            return false;
+        }
         for ($i = 0x20; $i <= 0x7E; $i++) { // all printable ASCII chars
             $c = chr($i);
             if (iconv('UTF-8', "$encoding//IGNORE", $c) === '') {
@@ -413,7 +441,4 @@ class HTMLPurifier_Encoder
         $encodings[$encoding] = $ret;
         return $ret;
     }
-    
-    
 }
-

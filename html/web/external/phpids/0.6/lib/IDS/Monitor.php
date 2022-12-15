@@ -9,16 +9,16 @@
  *
  * PHPIDS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License, or 
+ * the Free Software Foundation, version 3 of the License, or
  * (at your option) any later version.
  *
  * PHPIDS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>. 
+ * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>.
  *
  * PHP version 5.1.6+
  *
@@ -50,7 +50,6 @@
  */
 class IDS_Monitor
 {
-
     /**
      * Tags to define what to search for
      *
@@ -134,7 +133,7 @@ class IDS_Monitor
      *
      * @var object
      */
-    private $htmlpurifier = NULL;
+    private $htmlpurifier = null;
 
     /**
      * Path to HTMLPurifier source
@@ -201,28 +200,27 @@ class IDS_Monitor
             $this->json       = isset($init->config['General']['json'])
                 ? $init->config['General']['json'] : false;
 
-            if(isset($init->config['General']['HTML_Purifier_Path'])
+            if (isset($init->config['General']['HTML_Purifier_Path'])
                 && isset($init->config['General']['HTML_Purifier_Cache'])) {
                 $this->pathToHTMLPurifier =
                     $init->config['General']['HTML_Purifier_Path'];
                 $this->HTMLPurifierCache  =
                     $init->config['General']['HTML_Purifier_Cache'];
             }
-
         }
 
         if (!is_writeable($init->getBasePath()
             . $init->config['General']['tmp_path'])) {
             throw new Exception(
-                'Please make sure the ' . 
-                htmlspecialchars($init->getBasePath() . 
-                $init->config['General']['tmp_path'], ENT_QUOTES, 'UTF-8') . 
+                'Please make sure the ' .
+                htmlspecialchars($init->getBasePath() .
+                $init->config['General']['tmp_path'], ENT_QUOTES, 'UTF-8') .
                 ' folder is writable'
             );
         }
 
         include_once 'IDS/Report.php';
-        $this->report = new IDS_Report;
+        $this->report = new IDS_Report();
     }
 
     /**
@@ -252,10 +250,8 @@ class IDS_Monitor
      */
     private function _iterate($key, $value)
     {
-
         if (!is_array($value)) {
             if (is_string($value)) {
-
                 if ($filter = $this->_detect($key, $value)) {
                     include_once 'IDS/Event.php';
                     $this->report->addEvent(
@@ -284,7 +280,6 @@ class IDS_Monitor
      */
     private function _detect($key, $value)
     {
-
         // to increase performance, only start detection if value
         // isn't alphanumeric
         if (!$value || !preg_match('/[^\w\s\/@!?,\.]+|(?:\.\/)|(?:@@\w+)/', $value)) {
@@ -327,7 +322,6 @@ class IDS_Monitor
         $filters   = array();
         $filterSet = $this->storage->getFilterSet();
         foreach ($filterSet as $filter) {
-
             /*
              * in case we have a tag array specified the IDS will only
              * use those filters that are meant to detect any of the
@@ -363,13 +357,14 @@ class IDS_Monitor
      *
      * @return array
      */
-    private function _purifyValues($key, $value) {
-
+    private function _purifyValues($key, $value)
+    {
         include_once $this->pathToHTMLPurifier;
 
         if (!is_writeable($this->HTMLPurifierCache)) {
             throw new Exception(
-                $this->HTMLPurifierCache . ' must be writeable');
+                $this->HTMLPurifierCache . ' must be writeable'
+            );
         }
 
         if (class_exists('HTMLPurifier')) {
@@ -395,12 +390,12 @@ class IDS_Monitor
         if ($value != $purified_value || $redux_value) {
             $value = $this->_diff($value, $purified_value, $redux_value);
         } else {
-            $value = NULL;
+            $value = null;
         }
         if ($key != $purified_key) {
             $key = $this->_diff($key, $purified_key, $redux_key);
         } else {
-            $key = NULL;
+            $key = null;
         }
 
         return array($key, $value);
@@ -452,7 +447,8 @@ class IDS_Monitor
 
         // return the diff - ready to hit the converter and the rules
         $diff = trim(join('', array_reverse(
-            (array_slice($array_1, 0, $length)))));
+            (array_slice($array_1, 0, $length))
+        )));
 
         // clean up spaces between tag delimiters
         $diff = preg_replace('/>\s*</m', '><', $diff);
@@ -479,17 +475,17 @@ class IDS_Monitor
      *
      * @return array
      */
-    private function _jsonDecodeValues($key, $value) {
-
+    private function _jsonDecodeValues($key, $value)
+    {
         $tmp_key   = json_decode($key);
         $tmp_value = json_decode($value);
 
-        if($tmp_value && is_array($tmp_value) || is_object($tmp_value)) {
+        if ($tmp_value && is_array($tmp_value) || is_object($tmp_value)) {
             array_walk_recursive($tmp_value, array($this, '_jsonConcatContents'));
             $value = $this->tmpJsonString;
         }
 
-        if($tmp_key && is_array($tmp_key) || is_object($tmp_key)) {
+        if ($tmp_key && is_array($tmp_key) || is_object($tmp_key)) {
             array_walk_recursive($tmp_key, array($this, '_jsonConcatContents'));
             $key = $this->tmpJsonString;
         }
@@ -507,8 +503,8 @@ class IDS_Monitor
      *
      * @return void
      */
-    private function _jsonConcatContents($key, $value) {
-
+    private function _jsonConcatContents($key, $value)
+    {
         $this->tmpJsonString .=  $key . " " . $value . "\n";
     }
 
@@ -669,7 +665,6 @@ class IDS_Monitor
 
         return $this->report;
     }
-
 }
 
 /**

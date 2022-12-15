@@ -35,5 +35,5 @@
 
 	</div>
 
-	<p>Reference: <?php echo dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Top_10_2013-A2-Broken_Authentication_and_Session_Management' ); ?></p>
+	<p>Reference: <?php echo dvwaExternalLinkUrlGet('https://www.owasp.org/index.php/Top_10_2013-A2-Broken_Authentication_and_Session_Management'); ?></p>
 </div>

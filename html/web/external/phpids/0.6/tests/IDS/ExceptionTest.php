@@ -31,15 +31,20 @@ require_once 'IDS/Filter/Storage.php';
 
 class IDS_ExceptionTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp() {
+    public function setUp()
+    {
         $this->report = new IDS_Report(array(
-            new IDS_Event("key_a", 'val_b',
+            new IDS_Event(
+                "key_a",
+                'val_b',
                 array(
                     new IDS_Filter(1, '^test_a1$', 'desc_a1', array('tag_a1', 'tag_a2'), 1),
                     new IDS_Filter(1, '^test_a2$', 'desc_a2', array('tag_a2', 'tag_a3'), 2)
                 )
             ),
-            new IDS_Event('key_b', 'val_b',
+            new IDS_Event(
+                'key_b',
+                'val_b',
                 array(
                     new IDS_Filter(1, '^test_b1$', 'desc_b1', array('tag_b1', 'tag_b2'), 3),
                     new IDS_FIlter(1, '^test_b2$', 'desc_b2', array('tag_b2', 'tag_b3'), 4),
@@ -51,55 +56,67 @@ class IDS_ExceptionTest extends PHPUnit_Framework_TestCase
         $this->init = IDS_Init::init($this->path);
     }
 
-    public function testEventConstructorExceptions1() {
+    public function testEventConstructorExceptions1()
+    {
         $this->setExpectedException('InvalidArgumentException');
-        new IDS_Event(array(1,2), 'val_b',
-                array(
-                    new IDS_Filter(1, '^test_a1$', 'desc_a1', array('tag_a1', 'tag_a2'), 1),
-                    new IDS_Filter(1, '^test_a2$', 'desc_a2', array('tag_a2', 'tag_a3'), 2)
-                )
+        new IDS_Event(
+            array(1,2),
+            'val_b',
+            array(
+                new IDS_Filter(1, '^test_a1$', 'desc_a1', array('tag_a1', 'tag_a2'), 1),
+                new IDS_Filter(1, '^test_a2$', 'desc_a2', array('tag_a2', 'tag_a3'), 2)
+            )
         );
     }
 
-    public function testEventConstructorExceptions2() {
+    public function testEventConstructorExceptions2()
+    {
         $this->setExpectedException('InvalidArgumentException');
-        new IDS_Event("key_a", array(1,2),
-                array(
-                    new IDS_Filter(1, '^test_a1$', 'desc_a1', array('tag_a1', 'tag_a2'), 1),
-                    new IDS_Filter(1, '^test_a2$', 'desc_a2', array('tag_a2', 'tag_a3'), 2)
-                )
+        new IDS_Event(
+            "key_a",
+            array(1,2),
+            array(
+                new IDS_Filter(1, '^test_a1$', 'desc_a1', array('tag_a1', 'tag_a2'), 1),
+                new IDS_Filter(1, '^test_a2$', 'desc_a2', array('tag_a2', 'tag_a3'), 2)
+            )
         );
     }
 
-    public function testEventConstructorExceptions3() {
+    public function testEventConstructorExceptions3()
+    {
         $this->setExpectedException('InvalidArgumentException');
         new IDS_Event("key_a", 'val_b', array(1,2));
     }
 
-    public function testGetEventException() {
+    public function testGetEventException()
+    {
         $this->setExpectedException('InvalidArgumentException');
         $this->assertEquals($this->report->getEvent(array(1,2,3)), $this->getExpectedException());
     }
 
-    public function testHasEventException() {
+    public function testHasEventException()
+    {
         $this->setExpectedException('InvalidArgumentException');
         $this->assertEquals($this->report->hasEvent(array(1,2,3)), $this->getExpectedException());
     }
 
-    public function testInitConfigWrongPathException() {
+    public function testInitConfigWrongPathException()
+    {
         $this->setExpectedException('Exception');
         $this->assertEquals(IDS_Init::init('IDS/Config/Config.ini.wrong'), $this->getExpectedException());
     }
 
-    public function testWrongXmlFilterPathException() {
+    public function testWrongXmlFilterPathException()
+    {
         $this->setExpectedException('Exception');
         $this->init->config['General']['filter_type'] = 'xml';
         $this->init->config['General']['filter_path'] = 'IDS/wrong_path';
         $this->assertEquals(new IDS_Monitor(array('test', 'bla'), $this->init), $this->getExpectedException());
     }
 
-    public function tearDown() {
-    	$this->init->config['General']['filter_type'] = 'xml';
+    public function tearDown()
+    {
+        $this->init->config['General']['filter_type'] = 'xml';
     }
 }
 
