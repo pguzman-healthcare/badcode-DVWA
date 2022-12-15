@@ -540,25 +540,29 @@ function dvwaGuestbook()
 
 // Token functions --
 function checkToken($user_token, $session_token, $returnURL)  # Validate the given (CSRF) token
-{if ($user_token !== $session_token || !isset($session_token)) {
-    dvwaMessagePush('CSRF token is incorrect');
-    dvwaRedirect($returnURL);
-}
+{
+    if ($user_token !== $session_token || !isset($session_token)) {
+        dvwaMessagePush('CSRF token is incorrect');
+        dvwaRedirect($returnURL);
+    }
 }
 
 function generateSessionToken()  # Generate a brand new (CSRF) token
-{if (isset($_SESSION[ 'session_token' ])) {
-    destroySessionToken();
-}
+{
+    if (isset($_SESSION[ 'session_token' ])) {
+        destroySessionToken();
+    }
     $_SESSION[ 'session_token' ] = md5(uniqid());
 }
 
 function destroySessionToken()  # Destroy any session with the name 'session_token'
-{unset($_SESSION[ 'session_token' ]);
+{
+    unset($_SESSION[ 'session_token' ]);
 }
 
 function tokenField()  # Return a field for the (CSRF) token
-{return "<input type='hidden' name='user_token' value='{$_SESSION[ 'session_token' ]}' />";
+{
+    return "<input type='hidden' name='user_token' value='{$_SESSION[ 'session_token' ]}' />";
 }
 // -- END (Token functions)
 

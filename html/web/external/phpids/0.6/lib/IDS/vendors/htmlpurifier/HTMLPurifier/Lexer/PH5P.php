@@ -1219,13 +1219,13 @@ class HTML5TreeConstructer
     {
         switch($this->phase) {
             case self::INIT_PHASE: return $this->initPhase($token);
-            break;
+                break;
             case self::ROOT_PHASE: return $this->rootElementPhase($token);
-            break;
+                break;
             case self::MAIN_PHASE: return $this->mainPhase($token);
-            break;
+                break;
             case self::END_PHASE: return $this->trailingEndPhase($token);
-            break;
+                break;
         }
     }
 
@@ -1363,35 +1363,35 @@ class HTML5TreeConstructer
             /* Depends on the insertion mode: */
             switch($this->mode) {
                 case self::BEFOR_HEAD: return $this->beforeHead($token);
-                break;
+                    break;
                 case self::IN_HEAD:    return $this->inHead($token);
-                break;
+                    break;
                 case self::AFTER_HEAD: return $this->afterHead($token);
-                break;
+                    break;
                 case self::IN_BODY:    return $this->inBody($token);
-                break;
+                    break;
                 case self::IN_TABLE:   return $this->inTable($token);
-                break;
+                    break;
                 case self::IN_CAPTION: return $this->inCaption($token);
-                break;
+                    break;
                 case self::IN_CGROUP:  return $this->inColumnGroup($token);
-                break;
+                    break;
                 case self::IN_TBODY:   return $this->inTableBody($token);
-                break;
+                    break;
                 case self::IN_ROW:     return $this->inRow($token);
-                break;
+                    break;
                 case self::IN_CELL:    return $this->inCell($token);
-                break;
+                    break;
                 case self::IN_SELECT:  return $this->inSelect($token);
-                break;
+                    break;
                 case self::AFTER_BODY: return $this->afterBody($token);
-                break;
+                    break;
                 case self::IN_FRAME:   return $this->inFrameset($token);
-                break;
+                    break;
                 case self::AFTR_FRAME: return $this->afterFrameset($token);
-                break;
+                    break;
                 case self::END_PHASE:  return $this->trailingEndPhase($token);
-                break;
+                    break;
             }
         }
     }
